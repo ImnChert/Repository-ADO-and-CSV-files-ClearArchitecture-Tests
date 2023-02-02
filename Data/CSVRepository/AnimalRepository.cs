@@ -18,14 +18,14 @@ namespace Data.CSVRepository
 
         public async Task CreateAsync(Animal entity)
         {
-            StringBuilder strBuilder = new StringBuilder();
+            var strBuilder = new StringBuilder();
             strBuilder.Append(entity.Id).Append(";")
                 .Append(entity.Age).Append(";")
                 .Append(entity.Type.Id);
 
             string str = strBuilder.ToString();
 
-            using (StreamWriter streamWriter = new StreamWriter(_filename, true))
+            using (var streamWriter = new StreamWriter(_filename, true))
             {
                 await streamWriter.WriteAsync(str);
             }
@@ -37,7 +37,7 @@ namespace Data.CSVRepository
                 .Where(a => a.Id != entity.Id)
                 .ToList();
 
-            using (StreamWriter writer = new StreamWriter(_filename, false))
+            using (var writer = new StreamWriter(_filename, false))
             {
                 animals.ForEach(async item => await CreateAsync(item));
             }
@@ -49,7 +49,7 @@ namespace Data.CSVRepository
             var animals = new List<Animal>();
             var regex = new Regex(";");
 
-            using (StreamReader reader = new StreamReader(_filename))
+            using (var reader = new StreamReader(_filename))
             {
                 string line;
 
