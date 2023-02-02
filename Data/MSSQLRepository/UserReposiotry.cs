@@ -13,6 +13,20 @@ namespace Data.MSSQLRepository
             _trophyRepository = trophyRepository;
         }
 
+        public UserReposiotry(string connectionString, TrophyRepository trophyRepository)
+            : this(connectionString,
+                  "Users",
+                  @"INSERT INTO Users(FirstName,MiddleName, LastName, Age, TrophyId) 
+                    VALUES (@firstName,@middleName, @lastName, @age, @trophy)",
+                  @"UPDATE Users a SET a.FirstName = @firstName, a.MiddleName = @middleName, a.LastName = @lastName, 
+                    a.Age = @age, a.TrophyId = @trophy
+                    WHERE a.Id = @id",
+                  "SELECT * FROM Users a WHERE Id=@id",
+                  "SELECT * FROM Users",
+                  trophyRepository)
+        {
+        }
+
         public override async Task CreateAsync(User entity)
         {
             using (var sqlConnection = new SqlConnection(connectionString))

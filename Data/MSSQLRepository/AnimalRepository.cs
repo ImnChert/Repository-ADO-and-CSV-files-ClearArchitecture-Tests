@@ -13,6 +13,17 @@ namespace Data.MSSQLRepository
             _typeRepository = typeRepository;
         }
 
+        public AnimalRepository(string connectionString, TypeRepository typeRepository)
+            : this(connectionString,
+                  "Animals",
+                  "INSERT INTO Animals(Age,TypeId) VALUES (@age,@type)",
+                  "UPDATE Animals a SET a.Age = @age, a.TypeId = @type WHERE a.Id = @id",
+                  "SELECT * FROM Animals a WHERE Id=@id",
+                  "SELECT * FROM Animals",
+                  typeRepository)
+        {
+        }
+
         public override async Task CreateAsync(Animal entity)
         {
             using (var sqlConnection = new SqlConnection(connectionString))

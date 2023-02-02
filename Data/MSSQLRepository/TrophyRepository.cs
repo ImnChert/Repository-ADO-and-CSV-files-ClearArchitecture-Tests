@@ -14,6 +14,17 @@ namespace Data.MSSQLRepository
             _animalRepository = animalRepository;
         }
 
+        public TrophyRepository(string connectionString, AnimalRepository animalRepository)
+            : this(connectionString,
+                  "Trophes",
+                  "INSERT INTO Trophes(AnimalId,DateOfMurder) VALUES (@animalId,@date)",
+                  "UPDATE Trophes a SET a.AnimalId = @animalId, a.DateOfMurder = @date WHERE a.Id = @id",
+                  "SELECT * FROM Trophes a WHERE Id=@id",
+                  "SELECT * FROM Trophes",
+                  animalRepository)
+        {
+        }
+
         public override async Task CreateAsync(Trophy entity)
         {
             using (var sqlConnection = new SqlConnection(connectionString))

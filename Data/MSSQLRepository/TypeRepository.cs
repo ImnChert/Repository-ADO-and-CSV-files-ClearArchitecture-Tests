@@ -10,6 +10,16 @@ namespace Data.MSSQLRepository
         {
         }
 
+        public TypeRepository(string connectionString)
+            : this(connectionString,
+                  "Types",
+                  "INSERT INTO Types(Name) VALUES (@name)",
+                  "UPDATE Types a SET a.Name = @name WHERE a.Id = @id",
+                  "SELECT * FROM Types a WHERE Id=@id",
+                  "SELECT * FROM Types")
+        {
+        }
+
         public override async Task CreateAsync(TypeAnimal entity)
         {
             using (var sqlConnection = new SqlConnection(connectionString))
