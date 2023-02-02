@@ -51,8 +51,8 @@ namespace Data.CSVRepository
         public async Task<List<Trophy>> GetAllAsync()
         {
             int i = 0;
-            List<Trophy> trophes = new List<Trophy>();
-            Regex regex = new Regex(";");
+            var trophes = new List<Trophy>();
+            var regex = new Regex(";");
 
             using (StreamReader reader = new StreamReader(_filename))
             {
@@ -67,7 +67,7 @@ namespace Data.CSVRepository
                     Animal animal = await _animalRepository.GetAsync(animalId);
                     DateTime dateOfMurder = Convert.ToDateTime(arr[2]);
 
-                    Trophy trophy = new Trophy()
+                    var trophy = new Trophy()
                     {
                         Id = trophyId,
                         Animal = animal,

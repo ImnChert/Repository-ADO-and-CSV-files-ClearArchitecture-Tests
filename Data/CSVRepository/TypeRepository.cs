@@ -5,23 +5,20 @@ using System.Text.RegularExpressions;
 
 namespace Data.CSVRepository
 {
-    internal class AnimalRepository : IRepository<Animal>
+    internal class TypeRepository : IRepository<TypeAnimal>
     {
         private string _filename;
-        private TypeRepository _typeRepository;
 
-        public AnimalRepository(string filename, TypeRepository typeRepository)
+        public TypeRepository(string filename)
         {
             _filename = filename;
-            _typeRepository = typeRepository;
         }
 
-        public async Task CreateAsync(Animal entity)
+        public async Task CreateAsync(TypeAnimal entity)
         {
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.Append(entity.Id).Append(";")
-                .Append(entity.Age).Append(";")
-                .Append(entity.Type.Id);
+                .Append(entity.Name);
 
             string str = strBuilder.ToString();
 
@@ -31,22 +28,22 @@ namespace Data.CSVRepository
             }
         }
 
-        public async Task DeleteAsync(Animal entity)
+        public async Task DeleteAsync(TypeAnimal entity)
         {
-            List<Animal> animals = (await GetAllAsync())
+            List<TypeAnimal> typeAnimals = (await GetAllAsync())
                 .Where(a => a.Id != entity.Id)
                 .ToList();
 
             using (StreamWriter writer = new StreamWriter(_filename, false))
             {
-                animals.ForEach(async item => await CreateAsync(item));
+                typeAnimals.ForEach(async item => await CreateAsync(item));
             }
         }
 
-        public async Task<List<Animal>> GetAllAsync()
+        public async Task<List<TypeAnimal>> GetAllAsync()
         {
             int i = 0;
-            var animals = new List<Animal>();
+            var types = new List<TypeAnimal>();
             var regex = new Regex(";");
 
             using (StreamReader reader = new StreamReader(_filename))
@@ -57,31 +54,28 @@ namespace Data.CSVRepository
                 {
                     string[] arr = regex.Split(line);
 
-                    int animalId = Convert.ToInt16(arr[0]);
-                    int age = Convert.ToInt16(arr[2]);
-                    int typeId = Convert.ToInt16(arr[3]);
-                    TypeAnimal type = await _typeRepository.GetAsync(typeId);
+                    int typeId = Convert.ToInt16(arr[0]);
+                    string name = Convert.ToString(arr[1]);
 
-                    var animal = new Animal()
+                    var trophy = new TypeAnimal()
                     {
-                        Id = animalId,
-                        Age = age,
-                        Type = type
+                        Id = typeId,
+                        Name = name
                     };
 
-                    animals.Add(animal);
+                    types.Add(trophy);
 
                     i++;
                 }
             }
 
-            return animals;
+            return types;
         }
 
-        public async Task<Animal> GetAsync(int id)
-            => (await GetAllAsync()).First(x => x.Id == id);
+        public async Task<TypeAnimal> GetAsync(int id)
+             => (await GetAllAsync()).First(x => x.Id == id);
 
-        public async Task UpdateAsync(Animal entity)
+        public async Task UpdateAsync(TypeAnimal entity)
         {
             await DeleteAsync(entity);
             await CreateAsync(entity);
