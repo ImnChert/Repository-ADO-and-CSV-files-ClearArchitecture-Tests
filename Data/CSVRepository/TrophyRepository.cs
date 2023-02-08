@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Data.CSVRepository
 {
-    internal class TrophyRepository : IRepository<Trophy>
+    public class TrophyRepository : IRepository<Trophy>
     {
         private string _filename;
         private AnimalRepository _animalRepository;

@@ -3,17 +3,17 @@ using System.Data.SqlClient;
 
 namespace Data.MSSQLRepository
 {
-    public class UserReposiotry : MainRepository<User>
+    public class UserRepository : MainRepository<User>
     {
         private TrophyRepository _trophyRepository;
-        public UserReposiotry(string connectionString, string tableName, string createQuery, string updateQuery,
+        public UserRepository(string connectionString, string tableName, string createQuery, string updateQuery,
             string getQuery, string getAllQuery, TrophyRepository trophyRepository)
             : base(connectionString, tableName, createQuery, updateQuery, getQuery, getAllQuery)
         {
             _trophyRepository = trophyRepository;
         }
 
-        public UserReposiotry(string connectionString, TrophyRepository trophyRepository)
+        public UserRepository(string connectionString, TrophyRepository trophyRepository)
             : this(connectionString,
                   "Users",
                   @"INSERT INTO Users(FirstName,MiddleName, LastName, Age, TrophyId) 
@@ -31,7 +31,7 @@ namespace Data.MSSQLRepository
         {
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlDataAdapter = new SqlDataAdapter(createQuery, sqlConnection))
                 {
@@ -52,20 +52,20 @@ namespace Data.MSSQLRepository
 
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlCommand = new SqlCommand(getAllQuery, sqlConnection))
                 {
-                    using (SqlDataReader sqlReader = sqlCommand.ExecuteReader())
+                    using (SqlDataReader sqlReader = await sqlCommand.ExecuteReaderAsync())
                     {
                         while (await sqlReader.ReadAsync())
                         {
-                            int userId = sqlReader.GetInt16(0);
+                            int userId = sqlReader.GetInt32(0);
                             string firstName = sqlReader.GetString(1);
                             string middleName = sqlReader.GetString(2);
                             string lastName = sqlReader.GetString(3);
-                            int age = sqlReader.GetInt16(4);
-                            int trophyId = sqlReader.GetInt16(5);
+                            int age = sqlReader.GetInt32(4);
+                            int trophyId = sqlReader.GetInt32(5);
                             Trophy trophy = await _trophyRepository.GetAsync(trophyId);
 
                             var user = new User()
@@ -93,22 +93,22 @@ namespace Data.MSSQLRepository
 
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlCommand = new SqlCommand(getQuery, sqlConnection))
                 {
                     sqlCommand.Parameters.AddWithValue("@id", id);
 
-                    using (SqlDataReader sqlReader = sqlCommand.ExecuteReader())
+                    using (SqlDataReader sqlReader = await sqlCommand.ExecuteReaderAsync())
                     {
-                        while (sqlReader.Read())
+                        while (await sqlReader.ReadAsync())
                         {
-                            int userId = sqlReader.GetInt16(0);
+                            int userId = sqlReader.GetInt32(0);
                             string firstName = sqlReader.GetString(1);
                             string middleName = sqlReader.GetString(2);
                             string lastName = sqlReader.GetString(3);
-                            int age = sqlReader.GetInt16(4);
-                            int trophyId = sqlReader.GetInt16(5);
+                            int age = sqlReader.GetInt32(4);
+                            int trophyId = sqlReader.GetInt32(5);
                             Trophy trophy = await _trophyRepository.GetAsync(trophyId);
 
 
@@ -130,7 +130,7 @@ namespace Data.MSSQLRepository
         {
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlDataAdapter = new SqlDataAdapter(updateQuery, sqlConnection))
                 {

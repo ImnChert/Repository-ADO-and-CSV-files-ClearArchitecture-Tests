@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Data.CSVRepository
 {
-    internal class AnimalRepository : IRepository<Animal>
+    public class AnimalRepository : IRepository<Animal>
     {
         private string _filename;
         private TypeRepository _typeRepository;

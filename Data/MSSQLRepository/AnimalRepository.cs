@@ -28,7 +28,7 @@ namespace Data.MSSQLRepository
         {
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlDataAdapter = new SqlDataAdapter(createQuery, sqlConnection))
                 {
@@ -46,18 +46,18 @@ namespace Data.MSSQLRepository
 
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlCommand = new SqlCommand(getAllQuery, sqlConnection))
                 {
-                    using (SqlDataReader sqlReader = sqlCommand.ExecuteReader())
+                    using (SqlDataReader sqlReader = await sqlCommand.ExecuteReaderAsync())
                     {
-                        while (sqlReader.Read())
+                        while (await sqlReader.ReadAsync())
                         {
-                            int animalId = sqlReader.GetInt16(0);
-                            int typeId = sqlReader.GetInt16(1);
+                            int animalId = sqlReader.GetInt32(0);
+                            int typeId = sqlReader.GetInt32(1);
                             TypeAnimal type = await _typeRepository.GetAsync(typeId);
-                            int age = sqlReader.GetInt16(2);
+                            int age = sqlReader.GetInt32(2);
 
                             var animal = new Animal()
                             {
@@ -81,20 +81,20 @@ namespace Data.MSSQLRepository
 
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlCommand = new SqlCommand(getQuery, sqlConnection))
                 {
                     sqlCommand.Parameters.AddWithValue("@id", id);
 
-                    using (SqlDataReader sqlReader = sqlCommand.ExecuteReader())
+                    using (SqlDataReader sqlReader = await sqlCommand.ExecuteReaderAsync())
                     {
-                        while (sqlReader.Read())
+                        while (await sqlReader.ReadAsync())
                         {
-                            int animalId = sqlReader.GetInt16(0);
-                            int typeId = sqlReader.GetInt16(1);
+                            int animalId = sqlReader.GetInt32(0);
+                            int typeId = sqlReader.GetInt32(1);
                             TypeAnimal type = await _typeRepository.GetAsync(typeId);
-                            int age = sqlReader.GetInt16(2);
+                            int age = sqlReader.GetInt32(2);
 
                             animal.Id = animalId;
                             animal.Type = type;
@@ -111,7 +111,7 @@ namespace Data.MSSQLRepository
         {
             using (var sqlConnection = new SqlConnection(connectionString))
             {
-                await sqlConnection.OpenAsync();
+                await sqlConnection.OpenAsync().ConfigureAwait(false);
 
                 using (var sqlDataAdapter = new SqlDataAdapter(updateQuery, sqlConnection))
                 {
